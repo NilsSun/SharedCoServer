@@ -11,7 +11,8 @@ package com.lnu.sc.config;
  */
 public class RestConstants {
     	public static final String ARTIFACT = "/artifacts";
-	public static final String ARTIFACT_NAME = "/artifact/{ArtifactName:.+}";
+        public static final String ARTIFACT_NAME = "/artifact/{ArtifactName:.+}";
+	public static final String ARTIFACT_DELETE = "/artifactD/{ArtifactName:.+}";
         public static final String PATH_ONE = "C:\\artifacts";
 	public static final String FILES = "files";
 	public static final String DOWNLOAD = "download/{fileName}";

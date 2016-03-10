@@ -1,6 +1,11 @@
 package com.lnu.sc;
 
+import com.lnu.sc.config.RestConstants;
+import com.lnu.sc.data.RepositoryData;
+import com.lnu.sc.entities.Artifact;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11NioProtocol;
@@ -21,10 +26,23 @@ public class Application {
 	
 	@Value("${keystore.file}") private String keystoreFile;
 	@Value("${keystore.pass}") private String keystorePass;
-	
+        
+        public static List<Artifact> artifacts = RepositoryData.getArtifact();
+        
     public static void main(String[] args) {
+        
+        File[] folder1 = new File(RestConstants.PATH_ONE).listFiles();
+        int i = 0;
+        for (File f : folder1) {
+            // f is only file path string
+            artifacts.add(new Artifact(i, f));
+            //artifacts_backup.add(new Artifact(i, f));
+            i++;
+        }
+        
         SpringApplication.run(Application.class, args);
     }
+    
 	@Bean
 	public EmbeddedServletContainerCustomizer containerCustomizer()  throws FileNotFoundException {
 		final String absoluteKeystoreFile = ResourceUtils.getFile(keystoreFile).getAbsolutePath();

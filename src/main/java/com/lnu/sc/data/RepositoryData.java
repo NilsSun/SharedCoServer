@@ -1,8 +1,8 @@
 package com.lnu.sc.data;
 
 import com.lnu.sc.entities.Artifact;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -10,9 +10,9 @@ import java.util.Map;
  *
  */
 public class RepositoryData {
-    	private static Map<Integer, Artifact> artifacts = new HashMap<Integer, Artifact>();
+        private static List<Artifact> artifacts = new ArrayList<Artifact>();
 	
-	public static Map<Integer, Artifact> getArtifact(){
+	public static List<Artifact> getArtifact(){
 		return artifacts;
 		
 	}
