@@ -45,6 +45,44 @@ public class ArtifactController {
             response.addHeader("Access-Control-Allow-Origin","*");
             artifactService.deleteArtifact(name);
 	}
+	
+         @RequestMapping(value = RestConstants.UPLOAD, method = RequestMethod.POST)
+    	public @ResponseBody boolean Upload(@RequestParam(value="file", required=true) MultipartFile file
+    			)  {
+        	boolean ok = false;
+    			//File file = new File("d:\\pics\\0.png");
+    			try {
+    				InputStream is = file.getInputStream();
+    				String fileName = file.getOriginalFilename();
+    				ok = artifactService.addArtifact(is, fileName);
+    				
+    			} catch (IOException e) {
+    				String message = "Error while inserting document";
+    	            throw new RuntimeException(message, e);
+    			}
+    			//String reply = "File confirmed. File name is : " + file.getName();//file.getOriginalFilename();
+
+    			return ok;
+    	}
         
+        @RequestMapping(value = RestConstants.UPDATE, method = RequestMethod.PUT)
+        public @ResponseBody boolean Update(@RequestParam(value="file", required=true) MultipartFile file,
+        		@PathVariable(value = "ArtifactName") String name) 
+    			{
+        	
+        	boolean ok = false;
+        	//File file = new File("d:\\pics\\0.png");
+        	
+        	try {
+				InputStream is = file.getInputStream();
+				//String fileName = file.getOriginalFilename();
+				ok = artifactService.updateArtifact(is, name);
+				
+			} catch (IOException e) {
+				String message = "Error while inserting document";
+	            throw new RuntimeException(message, e);
+			}
+        return ok;	
+        }
         
 }
