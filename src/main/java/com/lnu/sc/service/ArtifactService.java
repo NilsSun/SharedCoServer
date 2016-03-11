@@ -1,13 +1,19 @@
 package com.lnu.sc.service;
 
 import static com.lnu.sc.Application.artifacts;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.Calendar;
 import java.util.List;
 
 import com.lnu.sc.entities.Artifact;
 import com.lnu.sc.config.RestConstants;
+
 import org.springframework.stereotype.Component;
 
 
@@ -59,44 +65,91 @@ public class ArtifactService {
 	/**
 	 * adds an artifact
 	 * 
-	 * @param file
-	 * @return added Artifact
+	 * @param InputStream, FileName
+	 * @return boolean
 	 */
-	public Artifact addArtifact(File f) {
-
-		File _fdest = new File(RestConstants.PATH_ONE + f.getName()); 
-                /*
-                    * where ever
-                    * the source
-                    * file is, make
-                    * a copy in our
-                    * repository
-                    */
+	public boolean addArtifact(InputStream is, String fileName) {
+		boolean ok = false;
+		String filePath = RestConstants.PATH_ONE+"/"+fileName;
+		File uploadDir = new File(RestConstants.PATH_ONE);
+		File uploadedFile = new File(filePath);
 		try {
-			copyFileUsingJava7Files(f, _fdest); // the copy method is called
-												// here
+			if (!uploadDir.exists()) {
+				uploadDir.mkdir();
+			}
+			if (!uploadedFile.exists()) {
+				uploadedFile.createNewFile();
+			} else {
+				return ok;
+			}
+			OutputStream os = new FileOutputStream(uploadedFile);
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read = is.read(bytes)) != -1) {
+				os.write(bytes);
+				bytes = new byte[1024];
+			}
+			os.flush();
+			os.close();
+			is.close();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * now we have the Artifact file and its copy so we will create an Image
-		 * object with it
-		 */
-		Artifact art = new Artifact(artifacts.size() + 1, f);
+		if (uploadedFile.exists() && uploadedFile.length() > 0) {
+			ok = true;
+		}
+
+		Artifact art = new Artifact(artifacts.size() + 1, uploadedFile);
 		artifacts.add(art);
-		return art;
+		return ok;
+	}
+	
+	/**
+	 * updates an artifact
+	 * 
+	 * @param InputStream, FileName
+	 * @return boolean
+	 */
+	public boolean updateArtifact(InputStream is, String fileName) {
+		boolean ok = false;
+		String filePath = RestConstants.PATH_ONE+"/"+fileName;
+		System.out.println("================================节点1=========================");
+		File updatedDir = new File(RestConstants.PATH_ONE);
+		File updatedFile = new File(filePath);
+		try {
+			if (!updatedDir.exists()) {
+				updatedDir.mkdir();
+			}
+			if (!updatedFile.exists()) {
+				System.err.println("No such file!!");
+				return ok;
+			} else {
+				updatedFile.delete();
+				updatedFile.createNewFile();
+			}
+			OutputStream os = new FileOutputStream(updatedFile);
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read = is.read(bytes)) != -1) {
+				os.write(bytes);
+				bytes = new byte[1024];
+			}
+			os.flush();
+			os.close();
+			is.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (updatedFile.exists() && updatedFile.length() > 0) {
+			ok = true;
+		}
+
+		search(fileName).setContent(updatedFile);
+		return ok;
 	}
 
-	/**
-	 * update ; replace and existing artifact with its replacement
-	 * 
-	 * @param file,name
-	 * @return updated artifact
-	 */
-	public Artifact updateArtifact(File file, String name) {
-		search(name).setContent(file);
-		return search(name);
-	}
 
 	/**
 	 * deletes and artifact where the id is given
@@ -111,19 +164,4 @@ public class ArtifactService {
             artifacts.remove(searchResult);
 	}
 
-	/**
-	 * copy File Using Java 7 Files
-	 * 
-	 * @param source
-	 * @param dest
-	 * @throws IOException
-	 */
-	private static void copyFileUsingJava7Files(File source, File dest)
-			throws IOException {
-		if (dest.exists())
-			return;
-		Files.copy(source.toPath(), dest.toPath());
-	}
-
-	
 }
