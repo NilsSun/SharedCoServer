@@ -28,6 +28,7 @@ public class Application {
 	@Value("${keystore.pass}") private String keystorePass;
         
         public static List<Artifact> artifacts = RepositoryData.getArtifact();
+        public static List<Collection> collections = RepositoryData.getCollection();
         
     public static void main(String[] args) {
         
