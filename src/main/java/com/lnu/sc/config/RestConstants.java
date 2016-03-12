@@ -17,5 +17,5 @@ public class RestConstants {
 	public static final String FILES = "files";
 	public static final String DOWNLOAD = "download/{fileName}";
 	public static final String UPLOAD = "upload";
-	public static final String PATH_TWO = "C:\\datafiles";
+	public static final String PATH_TWO = "relationship.txt";
 }
